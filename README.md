@@ -1,9 +1,4 @@
 
-D1	O
-D2	O
-D3	O
-D4	O
-D5	X
 <img width="177" height="146" alt="image" src="https://github.com/user-attachments/assets/24177f66-1ac4-43c2-9033-06af97eb8c42" />
 
 
