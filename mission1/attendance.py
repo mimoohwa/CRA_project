@@ -1,95 +1,131 @@
-id1 = {}
+import os
+
+MAX_PLAYER = 100
+TEST_SCRIPT_FILE = "attendance_weekday_500.txt"
+
 id_cnt = 0
+player_id = {}
 
-# dat[사용자ID][요일]
-dat = [[0] * 100 for _ in range(100)]
-points = [0] * 100
-grade = [0] * 100
-names = [''] * 100
-wed = [0] * 100
-weeken = [0] * 100
+player_points = [0] * MAX_PLAYER
+player_grade = [0] * MAX_PLAYER
+player_name = [''] * MAX_PLAYER
+player_wed_cnt = [0] * MAX_PLAYER
+player_weekend_cnt = [0] * MAX_PLAYER
 
-def input2(w, wk):
+def read_test_script(test_script_file):
+    new_input_lines = []
+    if not os.path.exists(test_script_file):
+        print("파일을 찾을 수 없습니다.")
+        exit()
+
+    f = open(test_script_file, encoding='utf-8')
+    for _ in range(500):
+        input_line = f.readline()
+        if not input_line:
+            break
+        if is_valid_input(input_line):
+            new_input_lines.append(input_line.strip())
+
+    return new_input_lines
+
+def is_valid_input(input_line):
+    if len(input_line.strip().split()) == 2:
+        return True
+    return False
+
+def resister_player(input_lines):
+    for input_line in input_lines:
+        player, day = input_line.split()
+        assign_player_id(player)
+
+def assign_player_id(player):
     global id_cnt
 
-    if w not in id1:
+    if player not in player_id:
         id_cnt += 1
-        id1[w] = id_cnt
-        names[id_cnt] = w
+        player_id[player] = id_cnt
+        player_name[id_cnt] = player
 
-    id2 = id1[w]
+def add_attendance_points(input_lines):
+    for input_line in input_lines:
+        player, day = input_line.split()
+        add_attendance_points_to_player(player, day)
 
+def add_attendance_points_to_player(player, day):
+    print(player, day)
+    id = player_id[player]
     add_point = 0
-    index = 0
-
-    if wk == "monday":
-        index = 0
+    if day == "monday":
         add_point += 1
-    elif wk == "tuesday":
-        index = 1
+    elif day == "tuesday":
         add_point += 1
-    elif wk == "wednesday":
-        index = 2
+    elif day == "wednesday":
         add_point += 3
-        wed[id2] += 1
-    elif wk == "thursday":
-        index = 3
+        player_wed_cnt[id] += 1
+    elif day == "thursday":
         add_point += 1
-    elif wk == "friday":
-        index = 4
+    elif day == "friday":
         add_point += 1
-    elif wk == "saturday":
-        index = 5
+    elif day == "saturday":
         add_point += 2
-        weeken[id2] += 1
-    elif wk == "sunday":
-        index = 6
+        player_weekend_cnt[id] += 1
+    elif day == "sunday":
         add_point += 2
-        weeken[id2] += 1
+        player_weekend_cnt[id] += 1
 
-    dat[id2][index] += 1
-    points[id2] += add_point
+    player_points[id] += add_point
 
-def input_file():
-    try:
-        with open("attendance_weekday_500.txt", encoding='utf-8') as f:
-            for _ in range(500):
-                line = f.readline()
-                if not line:
-                    break
-                parts = line.strip().split()
-                if len(parts) == 2:
-                    input2(parts[0], parts[1])
+def add_bonus_points():
+    for id in range(1, id_cnt + 1):
+        if player_wed_cnt[id] > 9:
+            player_points[id] += 10
+        if player_weekend_cnt[id] > 9:
+            player_points[id] += 10
 
-        for i in range(1, id_cnt + 1):
-            if dat[i][3] > 9:
-                points[i] += 10
-            if dat[i][5] + dat[i][6] > 9:
-                points[i] += 10
+def assign_grade():
+    for id in range(1, id_cnt + 1):
+        if player_points[id] >= 50:
+            player_grade[id] = 1
+        elif player_points[id] >= 30:
+            player_grade[id] = 2
+        else:
+            player_grade[id] = 0
 
-            if points[i] >= 50:
-                grade[i] = 1
-            elif points[i] >= 30:
-                grade[i] = 2
-            else:
-                grade[i] = 0
+def print_player_score():
+    for id in range(1, id_cnt + 1):
+        print(f"NAME : {player_name[id]}, POINT : {player_points[id]}, GRADE : {get_player_grade(id)}")
 
-            print(f"NAME : {names[i]}, POINT : {points[i]}, GRADE : ", end="")
-            if grade[i] == 1:
-                print("GOLD")
-            elif grade[i] == 2:
-                print("SILVER")
-            else:
-                print("NORMAL")
+def get_player_grade(id):
+    if player_grade[id] == 1:
+        return "GOLD"
+    elif player_grade[id] == 2:
+        return "SILVER"
+    else:
+        return "NORMAL"
 
-        print("\nRemoved player")
-        print("==============")
-        for i in range(1, id_cnt + 1):
-            if grade[i] not in (1, 2) and wed[i] == 0 and weeken[i] == 0:
-                print(names[i])
+def print_removed_player():
+    print("\nRemoved player")
+    print("==============")
+    for id in range(1, id_cnt + 1):
+        if is_removable_player(id):
+            print(player_name[id])
 
-    except FileNotFoundError:
-        print("파일을 찾을 수 없습니다.")
+def is_removable_player(id):
+    return player_grade[id] not in (1, 2) and player_wed_cnt[id] == 0 and player_weekend_cnt[id] == 0
+
+
+def main():
+    input_lines = read_test_script(TEST_SCRIPT_FILE)
+
+    resister_player(input_lines)
+    add_attendance_points(input_lines)
+
+    add_bonus_points()
+    assign_grade()
+
+    print_player_score()
+    print_removed_player()
+
 
 if __name__ == "__main__":
-    input_file()
+    main()
