@@ -12,7 +12,7 @@ player_name = [''] * MAX_PLAYER
 player_wed_cnt = [0] * MAX_PLAYER
 player_weekend_cnt = [0] * MAX_PLAYER
 
-def read_test_script(test_script_file):
+def read_test_script(test_script_file: str) -> list:
     new_input_lines = []
     if not os.path.exists(test_script_file):
         print("파일을 찾을 수 없습니다.")
@@ -28,17 +28,17 @@ def read_test_script(test_script_file):
 
     return new_input_lines
 
-def is_valid_input(input_line):
+def is_valid_input(input_line: str) -> bool:
     if len(input_line.strip().split()) == 2:
         return True
     return False
 
-def resister_player(input_lines):
+def resister_player(input_lines: list) -> None:
     for input_line in input_lines:
         player, day = input_line.split()
         assign_player_id(player)
 
-def assign_player_id(player):
+def assign_player_id(player: str) -> None:
     global id_cnt
 
     if player not in player_id:
@@ -46,13 +46,12 @@ def assign_player_id(player):
         player_id[player] = id_cnt
         player_name[id_cnt] = player
 
-def add_attendance_points(input_lines):
+def add_attendance_points(input_lines: list) -> None:
     for input_line in input_lines:
         player, day = input_line.split()
         add_attendance_points_to_player(player, day)
 
-def add_attendance_points_to_player(player, day):
-    print(player, day)
+def add_attendance_points_to_player(player: str, day: str) -> None:
     id = player_id[player]
     add_point = 0
     if day == "monday":
@@ -75,14 +74,14 @@ def add_attendance_points_to_player(player, day):
 
     player_points[id] += add_point
 
-def add_bonus_points():
+def add_bonus_points() -> None:
     for id in range(1, id_cnt + 1):
         if player_wed_cnt[id] > 9:
             player_points[id] += 10
         if player_weekend_cnt[id] > 9:
             player_points[id] += 10
 
-def assign_grade():
+def assign_grade() -> None:
     for id in range(1, id_cnt + 1):
         if player_points[id] >= 50:
             player_grade[id] = 1
@@ -91,11 +90,11 @@ def assign_grade():
         else:
             player_grade[id] = 0
 
-def print_player_score():
+def print_player_score() -> None:
     for id in range(1, id_cnt + 1):
         print(f"NAME : {player_name[id]}, POINT : {player_points[id]}, GRADE : {get_player_grade(id)}")
 
-def get_player_grade(id):
+def get_player_grade(id: int)-> str:
     if player_grade[id] == 1:
         return "GOLD"
     elif player_grade[id] == 2:
@@ -103,14 +102,14 @@ def get_player_grade(id):
     else:
         return "NORMAL"
 
-def print_removed_player():
+def print_removed_player() -> None:
     print("\nRemoved player")
     print("==============")
     for id in range(1, id_cnt + 1):
         if is_removable_player(id):
             print(player_name[id])
 
-def is_removable_player(id):
+def is_removable_player(id: int) -> bool:
     return player_grade[id] not in (1, 2) and player_wed_cnt[id] == 0 and player_weekend_cnt[id] == 0
 
 
