@@ -1,5 +1,5 @@
-import os
 from player import Player
+from script_reader import ScriptReader
 
 TEST_SCRIPT_FILE = "attendance_weekday_500.txt"
 
@@ -8,28 +8,6 @@ class AttendanceManager:
         self.id_cnt = 0
         self.player_id = {}
         self.player_list = []
-
-class TestScriptReader:
-    def read_test_script(self,test_script_file: str) -> list:
-        new_input_lines = []
-        if not os.path.exists(test_script_file):
-            print("파일을 찾을 수 없습니다.")
-            exit()
-
-        f = open(test_script_file, encoding='utf-8')
-        for _ in range(500):
-            input_line = f.readline()
-            if not input_line:
-                break
-            if self.is_valid_input(input_line):
-                new_input_lines.append(input_line.strip())
-
-        return new_input_lines
-
-    def is_valid_input(self,input_line: str) -> bool:
-        if len(input_line.strip().split()) == 2:
-            return True
-        return False
 
     def resister_player(self,input_lines: list) -> None:
         for input_line in input_lines:
@@ -111,7 +89,8 @@ class TestScriptReader:
 
 
     def main(self):
-        input_lines = self.read_test_script(TEST_SCRIPT_FILE)
+        reader = ScriptReader()
+        input_lines = reader.read_test_script(TEST_SCRIPT_FILE)
 
         self.resister_player(input_lines)
         self.add_attendance_points(input_lines)
