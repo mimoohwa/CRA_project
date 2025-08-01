@@ -16,5 +16,3 @@ class StrategyFactory:
             return SaturdayStrategy()
         elif day == "sunday":
             return SundayStrategy()
-        else:
-            return

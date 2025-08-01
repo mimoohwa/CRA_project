@@ -73,7 +73,3 @@ class AttendanceManager:
         self.print_player_score()
         self.print_removed_player()
 
-
-if __name__ == "__main__":
-    manager = AttendanceManager()
-    manager.main()

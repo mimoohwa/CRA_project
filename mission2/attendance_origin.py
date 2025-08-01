@@ -90,6 +90,3 @@ def input_file():
 
     except FileNotFoundError:
         print("파일을 찾을 수 없습니다.")
-
-if __name__ == "__main__":
-    input_file()
