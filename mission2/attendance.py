@@ -1,3 +1,4 @@
+from mission2.strategy_factory import StrategyFactory
 from player import Player
 from script_reader import ScriptReader
 
@@ -27,26 +28,23 @@ class AttendanceManager:
 
     def add_attendance_points_to_player(self, player_name: str, day: str) -> None:
         player = self.player_list[self.player_id[player_name]]
-        add_point = 0
-        if day == "monday":
-            add_point += 1
-        elif day == "tuesday":
-            add_point += 1
-        elif day == "wednesday":
-            add_point += 3
-            player.add_wed_cnt()
-        elif day == "thursday":
-            add_point += 1
-        elif day == "friday":
-            add_point += 1
-        elif day == "saturday":
-            add_point += 2
-            player.add_weekend_cnt()
-        elif day == "sunday":
-            add_point += 2
-            player.add_weekend_cnt()
 
-        player.add_points(add_point)
+        strategy_factory = StrategyFactory()
+        strategy = strategy_factory.get_strategy(player,day)
+        strategy.add_points()
+
+    def main(self):
+        reader = ScriptReader()
+        input_lines = reader.read_test_script(TEST_SCRIPT_FILE)
+
+        self.resister_player(input_lines)
+        self.add_attendance_points(input_lines)
+
+        self.add_bonus_points()
+        self.assign_grade()
+
+        self.print_player_score()
+        self.print_removed_player()
 
 
     def add_bonus_points(self) -> None:
@@ -88,18 +86,7 @@ class AttendanceManager:
         return player.grade not in (1, 2) and player.wednesday_count == 0 and player.weekend_count == 0
 
 
-    def main(self):
-        reader = ScriptReader()
-        input_lines = reader.read_test_script(TEST_SCRIPT_FILE)
 
-        self.resister_player(input_lines)
-        self.add_attendance_points(input_lines)
-
-        self.add_bonus_points()
-        self.assign_grade()
-
-        self.print_player_score()
-        self.print_removed_player()
 
 
 if __name__ == "__main__":
