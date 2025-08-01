@@ -1,20 +1,20 @@
 from day_strategy import *
 
 class StrategyFactory:
-    def get_strategy(self, player, day):
+    def get_strategy(self, day):
         if day == "monday":
-            return MondayStrategy(player)
+            return MondayStrategy()
         elif day == "tuesday":
-            return TuesdayStrategy(player)
+            return TuesdayStrategy()
         elif day == "wednesday":
-            return WednesdayStrategy(player)
+            return WednesdayStrategy()
         elif day == "thursday":
-            return ThursdayStrategy(player)
+            return ThursdayStrategy()
         elif day == "friday":
-            return FridayStrategy(player)
+            return FridayStrategy()
         elif day == "saturday":
-            return SaturdayStrategy(player)
+            return SaturdayStrategy()
         elif day == "sunday":
-            return SundayStrategy(player)
+            return SundayStrategy()
         else:
             return
